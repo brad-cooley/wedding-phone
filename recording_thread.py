@@ -23,9 +23,9 @@ class RecordingThread(Thread):
         self.__DEVICE_INDEX = device_index
 
         self.__id = uuid.uuid1()
-        __root_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+        __root_dir = os.path.dirname(__file__)
         self.__filename = str(self.__id) + ".wav"
-        self.__filepath = os.path.join(__root_dir, 'phone/audio_files', self.__filename)
+        self.__filepath = os.path.join(__root_dir, self.__filename)
         self.__recording = False
 
         pygame.mixer.init()
@@ -38,6 +38,9 @@ class RecordingThread(Thread):
 
     def get_id_as_str(self):
         return str(self.__id)
+    
+    def get_filepath(self):
+        return self.__filepath
 
     async def __create_file(self):
         logging.info("Creating file")
@@ -79,7 +82,11 @@ class RecordingThread(Thread):
         self.__recording = True
         logging.info("Recording {}".format(self.__filename))
     
-        while not self.__stop_event.is_set():
+        while self.__recording:
+            
+            if self.__stop_event.is_set():
+                break
+            
             data = self.__STREAM.read(self.__CHUNK)
             self.__frames.append(data)
 
@@ -89,7 +96,7 @@ class RecordingThread(Thread):
 
         logging.info("Finished recording")
 
-        wf = wave.open(self.__filepath, 'wb')
+        wf = wave.open(self.__filepath, 'wb') # this is going to audio_files, not directiory where this is happening 
         wf.setnchannels(self.__CHANNELS)
         wf.setsampwidth(P.get_sample_size(self.__SAMPLE_FORMAT))
         wf.setframerate(self.__FRAME_RATE)

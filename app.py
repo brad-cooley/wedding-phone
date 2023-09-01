@@ -14,18 +14,18 @@ def phone_picked_up():
 	global recording_thread
 
 	recording_thread = RecordingThread()
-	recording_thread.run()
+	logging.info(recording_thread.get_filepath())
+	recording_thread.start()
 
 
 def phone_hung_up():
 	logging.info('Receiver hung up')
 	global recording_thread
-
-	if recording_thread is not None:
-		recording_thread.stop()
-
-	recording_thread = None
-
+	
+	if recording_thread:
+        #logging.info(recording_thread.get_filepath())
+        recording_thread.stop()
+        recording_thread = None
 
 def listen_for_hook_state_change():
 	pin_number = 12
