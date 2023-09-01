@@ -5,7 +5,7 @@ import logging
 
 import wave
 import pyaudio
-from threading import Thread
+from threading import Thread, Event
 import pygame
 import asyncio
 
@@ -29,17 +29,19 @@ class RecordingThread(Thread):
         self.__recording = False
 
         pygame.mixer.init()
-        self.__VOICE_MESSAGE = pygame.mixer.Sound('mysound.wav')
+        self.__VOICE_MESSAGE = pygame.mixer.Sound('/home/phone/Documents/wedding-phone/mysound.wav')
 
         self.__STREAM = None
         self.__frames = []
+        
+        self.__stop_event = Event()
 
     def get_id_as_str(self):
         return str(self.__id)
 
     async def __create_file(self):
-        with open(self.__filepath, 'w'):
-            pass
+        logging.info("Creating file")
+        os.mknod(self.__filename)
 
     async def __play_voice_message(self):
         logging.info("Playing voicemail message")
@@ -49,6 +51,7 @@ class RecordingThread(Thread):
             pass
 
     async def __setup_stream(self):
+        logging.info("Setting up stream")
         self.__STREAM = P.open(format=self.__SAMPLE_FORMAT,
                                channels=self.__CHANNELS,
                                rate=self.__FRAME_RATE,
@@ -75,8 +78,8 @@ class RecordingThread(Thread):
 
         self.__recording = True
         logging.info("Recording {}".format(self.__filename))
-
-        while self.__recording:
+    
+        while not self.__stop_event_is_set():
             data = self.__STREAM.read(self.__CHUNK)
             self.__frames.append(data)
 
@@ -95,3 +98,4 @@ class RecordingThread(Thread):
 
     def stop(self):
         self.__recording = False
+        self.__stop_event.set()

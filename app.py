@@ -6,7 +6,7 @@ from recording_thread import RecordingThread
 
 logging.basicConfig(level=logging.INFO)
 
-recording_thread: RecordingThread
+recording_thread: RecordingThread or None = None
 
 
 def phone_picked_up():
@@ -14,14 +14,14 @@ def phone_picked_up():
 	global recording_thread
 
 	recording_thread = RecordingThread()
-	recording_thread.start()
+	recording_thread.run()
 
 
 def phone_hung_up():
 	logging.info('Receiver hung up')
 	global recording_thread
 
-	if recording_thread:
+	if recording_thread is not None:
 		recording_thread.stop()
 
 	recording_thread = None
