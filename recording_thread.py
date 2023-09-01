@@ -69,7 +69,7 @@ class RecordingThread(Thread):
             await asyncio.gather(*tasks)
 
             # Now, you can play the beep sound or perform any other action
-            print("All tasks completed, playing beep")
+            logging.info("All tasks completed, playing beep")
 
         asyncio.run(inner_run())
 
