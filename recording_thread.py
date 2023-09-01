@@ -79,7 +79,7 @@ class RecordingThread(Thread):
         self.__recording = True
         logging.info("Recording {}".format(self.__filename))
     
-        while not self.__stop_event_is_set():
+        while not self.__stop_event.is_set():
             data = self.__STREAM.read(self.__CHUNK)
             self.__frames.append(data)
 
