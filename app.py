@@ -2,13 +2,30 @@ import RPi.GPIO as GPIO
 import time
 import logging
 
+from recording_thread import RecordingThread
+
 logging.basicConfig(level=logging.INFO)
+
+recording_thread: RecordingThread
+
 
 def phone_picked_up():
 	logging.info('Receiver picked up')
+	global recording_thread
+
+	recording_thread = RecordingThread()
+	recording_thread.start()
+
 
 def phone_hung_up():
 	logging.info('Receiver hung up')
+	global recording_thread
+
+	if recording_thread:
+		recording_thread.stop()
+
+	recording_thread = None
+
 
 def listen_for_hook_state_change():
 	pin_number = 12
@@ -26,6 +43,7 @@ def listen_for_hook_state_change():
 	except KeyboardInterrupt:
 		print('Exiting...')
 		GPIO.cleanup()
+
 
 if __name__ == "__main__":
 	listen_for_hook_state_change()

@@ -1,9 +1,15 @@
 import pygame
+import time
 
 pygame.mixer.init()
-sound = pygame.mixer.Sound('sound.wav')
+sound = pygame.mixer.Sound('mysound.wav')
 playing = sound.play()
 
+for i in range(5):
+    playing.queue(sound)
+
+
 while playing.get_busy():
-    pygame.time.delay(100)
-    print('playing sound')
+    pass
+
+print(playing.get_queue())
