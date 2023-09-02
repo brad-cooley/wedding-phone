@@ -9,18 +9,25 @@ from threading import Thread, Event
 import pygame
 import asyncio
 
+import sounddevice as sd
+import soundfile as sf
+import queue
+import sys
+
 P = pyaudio.PyAudio()
 
 
 class RecordingThread(Thread):
 
-    def __init__(self, sample_format=pyaudio.paInt16, channels=1, frame_rate=44100, chunk=4096, device_index=2):
+    def __init__(self, sample_format=pyaudio.paInt16, channels=1, frame_rate=44100, chunk=4096, device_index=1):
         super().__init__()
         self.__SAMPLE_FORMAT = sample_format
         self.__CHANNELS = channels
         self.__FRAME_RATE = frame_rate
         self.__CHUNK = chunk
         self.__DEVICE_INDEX = device_index
+
+        self.__SUBTYPE = 'PCM_16'
 
         self.__id = uuid.uuid1()
         __root_dir = os.path.dirname(__file__)
@@ -79,29 +86,52 @@ class RecordingThread(Thread):
 
         asyncio.run(inner_run())
 
-        self.__recording = True
-        logging.info("Recording {}".format(self.__filename))
-    
-        while self.__recording:
-            
-            if self.__stop_event.is_set():
-                break
-            
-            data = self.__STREAM.read(self.__CHUNK)
-            self.__frames.append(data)
+        def callback(indata, frames, time, status):
+            """This is called (from a separate thread) for each audio block."""
+            if status:
+                print(status, file=sys.stderr)
+            q.put(indata.copy())
 
-        self.__STREAM.stop_stream()
-        self.__STREAM.close()
-        P.terminate()
 
-        logging.info("Finished recording")
+        q = queue.Queue()
 
-        wf = wave.open(self.__filepath, 'wb') # this is going to audio_files, not directiory where this is happening 
-        wf.setnchannels(self.__CHANNELS)
-        wf.setsampwidth(P.get_sample_size(self.__SAMPLE_FORMAT))
-        wf.setframerate(self.__FRAME_RATE)
-        wf.writeframes(b''.join(self.__frames))
-        wf.close()
+        # Make sure the file is opened before recording anything:
+        with sf.SoundFile(self.__filepath, mode='x', samplerate=self.__FRAME_RATE,
+                          channels=self.__CHANNELS, subtype=self.__SUBTYPE) as file:
+            with sd.InputStream(samplerate=self.__FRAME_RATE, device=self.__DEVICE_INDEX,
+                                channels=self.__CHANNELS, callback=callback):
+                self.__recording = True
+                while self.__recording:
+                    if self.__stop_event.is_set():
+                        break
+                    file.write(q.get())
+
+
+
+
+        # self.__recording = True
+        # logging.info("Recording {}".format(self.__filename))
+        #
+        # while self.__recording:
+        #
+        #     if self.__stop_event.is_set():
+        #         break
+        #
+        #     data = self.__STREAM.read(self.__CHUNK)
+        #     self.__frames.append(data)
+        #
+        # self.__STREAM.stop_stream()
+        # self.__STREAM.close()
+        # P.terminate()
+        #
+        # logging.info("Finished recording")
+        #
+        # wf = wave.open(self.__filepath, 'wb') # this is going to audio_files, not directiory where this is happening
+        # wf.setnchannels(self.__CHANNELS)
+        # wf.setsampwidth(P.get_sample_size(self.__SAMPLE_FORMAT))
+        # wf.setframerate(self.__FRAME_RATE)
+        # wf.writeframes(b''.join(self.__frames))
+        # wf.close()
 
     def stop(self):
         self.__recording = False
