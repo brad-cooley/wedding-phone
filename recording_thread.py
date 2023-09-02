@@ -3,8 +3,6 @@ import os
 import os.path
 import logging
 
-import wave
-import pyaudio
 from threading import Thread, Event
 import pygame
 import asyncio
@@ -14,14 +12,10 @@ import soundfile as sf
 import queue
 import sys
 
-P = pyaudio.PyAudio()
-
-
 class RecordingThread(Thread):
 
-    def __init__(self, sample_format=pyaudio.paInt16, channels=1, frame_rate=44100, chunk=4096, device_index=1):
+    def __init__(self, channels=1, frame_rate=44100, chunk=4096, device_index=1):
         super().__init__()
-        self.__SAMPLE_FORMAT = sample_format
         self.__CHANNELS = channels
         self.__FRAME_RATE = frame_rate
         self.__CHUNK = chunk
@@ -32,7 +26,7 @@ class RecordingThread(Thread):
         self.__id = uuid.uuid1()
         __root_dir = os.path.dirname(__file__)
         self.__filename = str(self.__id) + ".wav"
-        self.__filepath = os.path.join(__root_dir, self.__filename)
+        self.__filepath = os.path.join(__root_dir, 'audio_files', self.__filename)
         self.__recording = False
 
         pygame.mixer.init()
@@ -49,10 +43,6 @@ class RecordingThread(Thread):
     def get_filepath(self):
         return self.__filepath
 
-    async def __create_file(self):
-        logging.info("Creating file")
-        os.mknod(self.__filename)
-
     async def __play_voice_message(self):
         logging.info("Playing voicemail message")
         pygame.time.wait(1000)
@@ -60,22 +50,13 @@ class RecordingThread(Thread):
         while pygame.mixer.get_busy():
             pass
 
-    async def __setup_stream(self):
-        logging.info("Setting up stream")
-        self.__STREAM = P.open(format=self.__SAMPLE_FORMAT,
-                               channels=self.__CHANNELS,
-                               rate=self.__FRAME_RATE,
-                               input_device_index=self.__DEVICE_INDEX,
-                               frames_per_buffer=self.__CHUNK,
-                               input=True)
-
     def run(self):
         async def inner_run():
             # Create and gather all the asynchronous tasks
             tasks = [
-                self.__create_file(),
-                self.__play_voice_message(),
-                self.__setup_stream()
+                #self.__create_file(),
+                self.__play_voice_message()
+                #self.__setup_stream()
             ]
 
             # Wait for all the tasks to complete
@@ -98,41 +79,17 @@ class RecordingThread(Thread):
         # Make sure the file is opened before recording anything:
         with sf.SoundFile(self.__filepath, mode='x', samplerate=self.__FRAME_RATE,
                           channels=self.__CHANNELS, subtype=self.__SUBTYPE) as file:
+            logging.debug('File {} successfully created'.format(file.name))
             with sd.InputStream(samplerate=self.__FRAME_RATE, device=self.__DEVICE_INDEX,
                                 channels=self.__CHANNELS, callback=callback):
+                logging.info('Recording...')
                 self.__recording = True
                 while self.__recording:
                     if self.__stop_event.is_set():
                         break
                     file.write(q.get())
 
-
-
-
-        # self.__recording = True
-        # logging.info("Recording {}".format(self.__filename))
-        #
-        # while self.__recording:
-        #
-        #     if self.__stop_event.is_set():
-        #         break
-        #
-        #     data = self.__STREAM.read(self.__CHUNK)
-        #     self.__frames.append(data)
-        #
-        # self.__STREAM.stop_stream()
-        # self.__STREAM.close()
-        # P.terminate()
-        #
-        # logging.info("Finished recording")
-        #
-        # wf = wave.open(self.__filepath, 'wb') # this is going to audio_files, not directiory where this is happening
-        # wf.setnchannels(self.__CHANNELS)
-        # wf.setsampwidth(P.get_sample_size(self.__SAMPLE_FORMAT))
-        # wf.setframerate(self.__FRAME_RATE)
-        # wf.writeframes(b''.join(self.__frames))
-        # wf.close()
-
     def stop(self):
         self.__recording = False
+        logging.info('Recording stopped. Saving...')
         self.__stop_event.set()
