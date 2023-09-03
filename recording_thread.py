@@ -43,10 +43,11 @@ class RecordingThread(Thread):
 
     async def __play_voice_message(self):
         logging.info("Playing voicemail message")
-        pygame.time.wait(1000)
+        pygame.time.wait(500)
         self.__VOICE_MESSAGE.play()
         while pygame.mixer.get_busy():
             if self.__stop_event.is_set():
+                pygame.mixer.stop()
                 break
             pass
 
@@ -55,6 +56,7 @@ class RecordingThread(Thread):
         self.__MESSAGE_TONE.play()
         while pygame.mixer.get_busy():
             if self.__stop_event.is_set():
+                pygame.mixer.stop()
                 break
             pass
         pygame.time.wait(200)
@@ -77,38 +79,46 @@ class RecordingThread(Thread):
             await asyncio.gather(*tasks)
 
             # Now, you can play the beep sound or perform any other action
-            logging.info("All tasks completed, safe to play beep")
-            self.__play_message_tone()
+            if not self.__stop_event.is_set():
+                logging.info("All tasks completed, safe to play beep")
+                self.__play_message_tone()
             
 
         asyncio.run(inner_run())
 
         q = queue.Queue()
 
-        # Make sure the file is opened before recording anything:
-        with sf.SoundFile(file=self.__filepath,
-                          mode='x',
-                          samplerate=self.__FRAME_RATE,
-                          channels=self.__CHANNELS,
-                          subtype=self.__SUBTYPE
-                          ) as file:
+        if not self.__stop_event.is_set():
 
-            logging.info('File {} successfully created'.format(file.name))
+            # Make sure the file is opened before recording anything:
+            with sf.SoundFile(file=self.__filepath,
+                              mode='x',
+                              samplerate=self.__FRAME_RATE,
+                              channels=self.__CHANNELS,
+                              subtype=self.__SUBTYPE
+                              ) as file:
 
-            with sd.InputStream(samplerate=self.__FRAME_RATE,
-                                device=self.__DEVICE_INDEX,
-                                channels=self.__CHANNELS,
-                                callback=callback):
+                logging.info('File {} successfully created'.format(file.name))
 
-                logging.info('Recording...')
-                self.__recording = True
+                with sd.InputStream(samplerate=self.__FRAME_RATE,
+                                    device=self.__DEVICE_INDEX,
+                                    channels=self.__CHANNELS,
+                                    callback=callback):
 
-                while self.__recording:
-                    if self.__stop_event.is_set():
-                        break
-                    file.write(q.get())
+                    logging.info('Recording...')
+                    self.__recording = True
+
+                    while self.__recording:
+                        if self.__stop_event.is_set():
+                            break
+                        file.write(q.get())
 
     def stop(self):
+        if self.__recording:
+            logging.info('Recording stopped. File saved to {}'.format(self.__filepath))
+        else:
+            logging.warning('Receiver hung up before recording started.')
+            
         self.__recording = False
-        logging.info('Recording stopped. File saved to {}'.format(self.__filepath)) # make this log statement actually check for file and contents on disk
+        # make this log statement actually check for file and contents on disk
         self.__stop_event.set()
