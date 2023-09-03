@@ -52,5 +52,5 @@ if __name__ == "__main__":
 	if not os.path.exists(save_path):
 		os.mkdir(save_path)
 		logging.info('Given path doesn\'t exist. Path created')
-		
+
 	listen_for_hook_state_change()
