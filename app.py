@@ -14,7 +14,6 @@ def phone_picked_up():
 	global recording_thread
 
 	recording_thread = RecordingThread()
-	logging.info(recording_thread.get_filepath())
 	recording_thread.start()
 
 
@@ -23,7 +22,6 @@ def phone_hung_up():
 	global recording_thread
 	
 	if recording_thread:
-		logging.info(recording_thread.get_filepath())
 		recording_thread.stop()
 		recording_thread = None
 

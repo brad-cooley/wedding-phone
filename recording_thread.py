@@ -15,13 +15,13 @@ import sys
 
 class RecordingThread(Thread):
 
-    def __init__(self, subtype='PCM_16', channels=1, frame_rate=44100, chunk=4096, device_index=1):
+    def __init__(self, subtype='PCM_16', channels=1, frame_rate=44100, chunk=1024, device_index=2):
         super().__init__()
         self.__SUBTYPE = subtype
         self.__CHANNELS = channels
         self.__FRAME_RATE = frame_rate
         self.__CHUNK = chunk
-        self.__DEVICE_INDEX = device_index
+        self.__DEVICE_INDEX = 'USB Audio Device'
 
         self.__id = uuid.uuid1()
         __root_dir = os.path.dirname(__file__)
@@ -50,10 +50,10 @@ class RecordingThread(Thread):
 
     def __play_message_tone(self):
         logging.info("Playing beep")
-        pygame.time.wait(10)
         self.__MESSAGE_TONE.play()
         while pygame.mixer.get_busy():
             pass
+        pygame.time.wait(200)
 
     def run(self):
 
@@ -75,6 +75,7 @@ class RecordingThread(Thread):
             # Now, you can play the beep sound or perform any other action
             logging.info("All tasks completed, safe to play beep")
             self.__play_message_tone()
+            
 
         asyncio.run(inner_run())
 
@@ -105,5 +106,5 @@ class RecordingThread(Thread):
 
     def stop(self):
         self.__recording = False
-        logging.info('Recording stopped. Saving...')
+        logging.info('Recording stopped. File saved') # make this log statement actually check for file and contents on disk
         self.__stop_event.set()
