@@ -46,12 +46,16 @@ class RecordingThread(Thread):
         pygame.time.wait(1000)
         self.__VOICE_MESSAGE.play()
         while pygame.mixer.get_busy():
+            if self.__stop_event.is_set():
+                break
             pass
 
     def __play_message_tone(self):
         logging.info("Playing beep")
         self.__MESSAGE_TONE.play()
         while pygame.mixer.get_busy():
+            if self.__stop_event.is_set():
+                break
             pass
         pygame.time.wait(200)
 
@@ -89,7 +93,7 @@ class RecordingThread(Thread):
                           subtype=self.__SUBTYPE
                           ) as file:
 
-            logging.debug('File {} successfully created'.format(file.name))
+            logging.info('File {} successfully created'.format(file.name))
 
             with sd.InputStream(samplerate=self.__FRAME_RATE,
                                 device=self.__DEVICE_INDEX,
@@ -106,5 +110,5 @@ class RecordingThread(Thread):
 
     def stop(self):
         self.__recording = False
-        logging.info('Recording stopped. File saved') # make this log statement actually check for file and contents on disk
+        logging.info('Recording stopped. File saved to {}'.format(self.__filepath)) # make this log statement actually check for file and contents on disk
         self.__stop_event.set()
