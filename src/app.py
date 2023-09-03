@@ -1,19 +1,20 @@
-import RPi.GPIO as GPIO
-import time
 import logging
+import time
+import sys
 
+import RPi.GPIO as GPIO
 from recording_thread import RecordingThread
 
-logging.basicConfig(level=logging.INFO)
-
 recording_thread: RecordingThread or None = None
+save_dir = '/home/phone/Documents/wedding_voicemail_audio_files'
+logging.basicConfig(level=logging.INFO)
 
 
 def phone_picked_up():
 	logging.info('Receiver picked up')
 	global recording_thread
 
-	recording_thread = RecordingThread()
+	recording_thread = RecordingThread(save_dir=save_dir)
 	recording_thread.start()
 
 
@@ -24,6 +25,7 @@ def phone_hung_up():
 	if recording_thread:
 		recording_thread.stop()
 		recording_thread = None
+
 
 def listen_for_hook_state_change():
 	pin_number = 12
@@ -44,4 +46,6 @@ def listen_for_hook_state_change():
 
 
 if __name__ == "__main__":
+	save_dir = sys.argv[1] if len(sys.argv) > 1 else save_dir
+	logging.info(f"Using save directory: {save_dir}")
 	listen_for_hook_state_change()

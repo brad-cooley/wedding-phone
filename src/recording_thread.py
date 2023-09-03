@@ -1,37 +1,37 @@
-import uuid
+import logging
 import os
 import os.path
-import logging
-
-from threading import Thread, Event
-import pygame
-import asyncio
-
-import sounddevice as sd
-import soundfile as sf
 import queue
 import sys
+import uuid
+
+from threading import Thread, Event
+
+import pygame
+import asyncio
+import sounddevice as sd
+import soundfile as sf
 
 
 class RecordingThread(Thread):
 
-    def __init__(self, subtype='PCM_16', channels=1, frame_rate=44100, chunk=1024, device_index=2):
+    def __init__(self, subtype='PCM_16', channels=1, frame_rate=44100, chunk=1024, device_index='USB Audio Device', save_dir=os.path.dirname(__file__)):
         super().__init__()
         self.__SUBTYPE = subtype
         self.__CHANNELS = channels
         self.__FRAME_RATE = frame_rate
         self.__CHUNK = chunk
-        self.__DEVICE_INDEX = 'USB Audio Device'
+        self.__DEVICE_INDEX = device_index
+        self.__SAVE_DIR = save_dir
 
         self.__id = uuid.uuid1()
-        __root_dir = os.path.dirname(__file__)
         self.__filename = str(self.__id) + ".wav"
-        self.__filepath = os.path.join(__root_dir, 'audio_files', self.__filename)
+        self.__filepath = os.path.join(self.__SAVE_DIR, self.__filename)
         self.__recording = False
 
         pygame.mixer.init()
-        self.__VOICE_MESSAGE = pygame.mixer.Sound('/home/phone/Documents/wedding-phone/VoiceMessage.wav')
-        self.__MESSAGE_TONE = pygame.mixer.Sound('/home/phone/Documents/wedding-phone/beep.wav')
+        self.__VOICE_MESSAGE = pygame.mixer.Sound('VoiceMessage.wav')
+        self.__MESSAGE_TONE = pygame.mixer.Sound('beep.wav')
         
         self.__stop_event = Event()
 
@@ -82,10 +82,8 @@ class RecordingThread(Thread):
             if not self.__stop_event.is_set():
                 logging.info("All tasks completed, safe to play beep")
                 self.__play_message_tone()
-            
 
         asyncio.run(inner_run())
-
         q = queue.Queue()
 
         if not self.__stop_event.is_set():
@@ -120,5 +118,5 @@ class RecordingThread(Thread):
             logging.warning('Receiver hung up before recording started.')
             
         self.__recording = False
-        # make this log statement actually check for file and contents on disk
+        # make a statement that actually checks for file and contents on disk to confirm it was saved
         self.__stop_event.set()
