@@ -2,3 +2,5 @@
 **/.DS_Store
 env
 environment.sh
+.idea/
+**/__pycache__/
