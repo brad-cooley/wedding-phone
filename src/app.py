@@ -8,7 +8,12 @@ from recording_thread import RecordingThread
 
 recording_thread: RecordingThread or None = None
 save_path = '/home/phone/Documents/wedding_voicemail_audio_files'
-logging.basicConfig(level=logging.INFO)
+
+logging.basicConfig(filename="wedding_voicemail.log",
+					filemode='a',
+					format='%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s',
+					datefmt='%H:%M:%S',
+					level=logging.DEBUG)
 
 
 def phone_picked_up():
