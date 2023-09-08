@@ -13,7 +13,7 @@ logging.basicConfig(filename="wedding_voicemail.log",
 					filemode='a',
 					format='%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s',
 					datefmt='%H:%M:%S',
-					level=logging.DEBUG)
+					level=logging.INFO)
 
 
 def phone_picked_up():
