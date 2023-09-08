@@ -1,0 +1,81 @@
+00:52:21,924 root INFO Using path /home/phone/Documents/wedding_voicemail_audio_files
+00:52:21,926 root INFO Given path doesn't exist. Path created
+00:52:21,937 root INFO Receiver hung up
+01:13:45,687 root INFO Receiver picked up
+01:45:47,804 root INFO Using path /home/phone/Documents/wedding_voicemail_audio_files
+01:45:47,805 root INFO Receiver picked up
+01:45:47,919 asyncio DEBUG Using selector: EpollSelector
+01:45:47,921 root INFO Playing voicemail message
+01:46:05,152 root INFO All tasks completed, safe to play beep
+01:46:05,153 root INFO Playing beep
+01:46:06,289 root INFO File /home/phone/Documents/wedding_voicemail_audio_files/f5f35f0a-4e0a-11ee-b88e-b827eb667013.wav successfully created
+01:46:06,295 root INFO Recording...
+01:46:15,216 root INFO Receiver hung up
+01:46:15,217 root INFO Recording stopped. File saved to /home/phone/Documents/wedding_voicemail_audio_files/f5f35f0a-4e0a-11ee-b88e-b827eb667013.wav
+01:46:16,922 root INFO Receiver picked up
+01:46:16,950 asyncio DEBUG Using selector: EpollSelector
+01:46:16,952 root INFO Playing voicemail message
+01:46:34,167 root INFO All tasks completed, safe to play beep
+01:46:34,168 root INFO Playing beep
+01:46:35,306 root INFO File /home/phone/Documents/wedding_voicemail_audio_files/074e46d4-4e0b-11ee-b88e-b827eb667013.wav successfully created
+01:46:35,311 root INFO Recording...
+01:46:40,39 root INFO Receiver hung up
+01:46:40,40 root INFO Recording stopped. File saved to /home/phone/Documents/wedding_voicemail_audio_files/074e46d4-4e0b-11ee-b88e-b827eb667013.wav
+01:49:37,476 root INFO Using path /home/phone/Documents/wedding_voicemail_audio_files
+01:49:37,477 root INFO Receiver hung up
+01:49:58,432 root INFO Receiver picked up
+01:49:58,473 asyncio DEBUG Using selector: EpollSelector
+01:49:58,475 root INFO Playing voicemail message
+01:50:15,716 root INFO All tasks completed, safe to play beep
+01:50:15,716 root INFO Playing beep
+01:50:16,838 root INFO File /home/phone/Documents/wedding_voicemail_audio_files/8b55e04a-4e0b-11ee-907b-b827eb667013.wav successfully created
+01:50:16,844 root INFO Recording...
+01:50:22,669 root INFO Receiver hung up
+01:50:22,670 root INFO Recording stopped. File saved to /home/phone/Documents/wedding_voicemail_audio_files/8b55e04a-4e0b-11ee-907b-b827eb667013.wav
+01:52:03,921 root INFO Using path /home/phone/Documents/wedding_voicemail_audio_files
+01:52:03,922 root INFO Receiver picked up
+01:52:03,964 asyncio DEBUG Using selector: EpollSelector
+01:52:03,966 root INFO Playing voicemail message
+01:52:07,517 root INFO Receiver hung up
+01:52:07,528 root WARNING Receiver hung up before recording started.
+01:52:49,746 root INFO Using path /home/phone/Documents/wedding_voicemail_audio_files
+01:52:49,749 root INFO Receiver hung up
+01:52:49,756 root INFO Using path /home/phone/Documents/wedding_voicemail_audio_files
+01:52:49,761 root INFO Receiver hung up
+01:54:30,548 root INFO Receiver picked up
+01:54:30,555 root INFO Receiver picked up
+01:54:30,715 asyncio DEBUG Using selector: EpollSelector
+01:54:30,718 root INFO Playing voicemail message
+01:54:37,110 root INFO Receiver hung up
+01:54:37,111 root WARNING Receiver hung up before recording started.
+01:58:28,838 root INFO Receiver picked up
+01:58:28,865 asyncio DEBUG Using selector: EpollSelector
+01:58:28,867 root INFO Playing voicemail message
+01:58:31,260 root INFO Receiver hung up
+01:58:31,266 root WARNING Receiver hung up before recording started.
+02:02:13,159 root INFO Receiver picked up
+02:02:13,389 asyncio DEBUG Using selector: EpollSelector
+02:02:13,391 root INFO Playing voicemail message
+02:02:15,889 root INFO Receiver hung up
+02:02:15,895 root WARNING Receiver hung up before recording started.
+02:07:27,163 root INFO Using path /home/phone/Documents/wedding_voicemail_audio_files
+02:07:27,165 root INFO Receiver hung up
+02:07:27,175 root INFO Using path /home/phone/Documents/wedding_voicemail_audio_files
+02:07:27,176 root INFO Receiver hung up
+02:08:28,474 root INFO Receiver picked up
+02:08:28,490 root INFO Receiver picked up
+02:08:30,203 root INFO Playing voicemail message
+02:08:47,421 root INFO All tasks completed, safe to play beep
+02:08:47,421 root INFO Playing beep
+02:08:48,572 root INFO File /home/phone/Documents/wedding_voicemail_audio_files/219a7a8c-4e0e-11ee-b162-b827eb667013.wav successfully created
+02:08:48,577 root INFO Recording...
+02:08:57,993 root INFO Receiver hung up
+02:08:57,994 root INFO Recording stopped. File saved to /home/phone/Documents/wedding_voicemail_audio_files/219a7a8c-4e0e-11ee-b162-b827eb667013.wav
+02:09:25,848 root INFO Receiver picked up
+02:09:25,879 root INFO Playing voicemail message
+02:09:26,590 root INFO Receiver hung up
+02:09:26,596 root WARNING Receiver hung up before recording started.
+02:09:30,809 root INFO Receiver picked up
+02:09:30,843 root INFO Playing voicemail message
+02:09:33,763 root INFO Receiver hung up
+02:09:33,768 root WARNING Receiver hung up before recording started.
